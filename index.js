@@ -1,17 +1,16 @@
-import 'dotenv/config';
-import express from 'express';
-import cors from 'cors';
-
+require('dotenv').config();
+const express = require('express');
+const cors = require('cors');
+const routes = require('./routes/index.js');
 const app = express();
 const PORT = process.env.PORT || 3000;
-
 app.use(cors());
 app.use(express.json());
-
+app.use('/api', routes);
 app.get('/', (req, res) => {
-  res.send(`Servidor corriendo en puerto ${PORT}`);
+  res.send(`Servidor Sistema Médico corriendo en puerto ${PORT}`);
 });
-
 app.listen(PORT, () => {
-  console.log(`🚀 Servidor escuchando en http://localhost:${PORT}`);
+  console.log(`🚀 Servidor Sistema Médico escuchando en http://localhost:${PORT}`);
+  console.log(`📋 API disponible en http://localhost:${PORT}/api`);
 });

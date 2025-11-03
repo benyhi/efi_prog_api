@@ -6,6 +6,11 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true, 
       autoIncrement: true 
     },
+    numero_historia_clinica: {
+      type: DataTypes.STRING(50),
+      allowNull: false,
+      unique: true
+    },
     fecha_nacimiento: { 
       type: DataTypes.DATEONLY, 
       allowNull: false 

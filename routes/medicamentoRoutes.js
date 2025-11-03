@@ -1,0 +1,12 @@
+const express = require('express');
+const medicamentoController = require('../controllers/medicamentoController.js');
+const router = express.Router();
+router.get('/', medicamentoController.getAll);
+router.get('/:id', medicamentoController.getById);
+router.post('/', medicamentoController.create);
+router.put('/:id', medicamentoController.update);
+router.delete('/:id', medicamentoController.delete);
+router.patch('/:id/toggle-estado', medicamentoController.toggleEstado);
+router.get('/principio-activo/:principio_activo', medicamentoController.buscarPorPrincipioActivo);
+router.get('/:id/estadisticas', medicamentoController.getEstadisticas);
+module.exports = router;

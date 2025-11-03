@@ -1,0 +1,11 @@
+const express = require('express');
+const pagoController = require('../controllers/pagoController.js');
+const router = express.Router();
+router.get('/', pagoController.getAll);
+router.get('/:id', pagoController.getById);
+router.post('/', pagoController.create);
+router.put('/:id', pagoController.update);
+router.patch('/:id/anular', pagoController.anular);
+router.get('/paciente/:paciente_id', pagoController.getByPaciente);
+router.get('/reportes/estadisticas', pagoController.getReportes);
+module.exports = router;

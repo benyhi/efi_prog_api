@@ -1,0 +1,13 @@
+const express = require('express');
+const consultorioController = require('../controllers/consultorioController.js');
+const router = express.Router();
+router.get('/', consultorioController.getAll);
+router.get('/disponibles', consultorioController.getDisponibles);
+router.get('/numero/:numero', consultorioController.getByNumero);
+router.get('/:id', consultorioController.getById);
+router.post('/', consultorioController.create);
+router.put('/:id', consultorioController.update);
+router.delete('/:id', consultorioController.delete);
+router.get('/:id/disponibilidad', consultorioController.getDisponibilidad);
+router.patch('/:id/toggle-disponibilidad', consultorioController.toggleDisponibilidad);
+module.exports = router;

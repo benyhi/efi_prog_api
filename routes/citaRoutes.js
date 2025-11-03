@@ -1,0 +1,14 @@
+const express = require('express');
+const citaController = require('../controllers/citaController.js');
+const router = express.Router();
+router.get('/', citaController.getAll);
+router.get('/paciente/:pacienteId', citaController.getByPaciente);
+router.get('/medico/:medicoId', citaController.getByMedico);
+router.get('/:id', citaController.getById);
+router.post('/', citaController.create);
+router.put('/:id', citaController.update);
+router.delete('/:id', citaController.delete);
+router.patch('/:id/cancelar', citaController.cancelar);
+router.patch('/:id/confirmar', citaController.confirmar);
+router.patch('/:id/completar', citaController.completar);
+module.exports = router;

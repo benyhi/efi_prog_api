@@ -1,0 +1,11 @@
+const express = require('express');
+const recetaController = require('../controllers/recetaController.js');
+const router = express.Router();
+router.get('/', recetaController.getAll);
+router.get('/:id', recetaController.getById);
+router.post('/', recetaController.create);
+router.put('/:id', recetaController.update);
+router.delete('/:id', recetaController.delete);
+router.post('/:id/medicamentos', recetaController.agregarMedicamento);
+router.delete('/:id/medicamentos/:medicamento_id', recetaController.eliminarMedicamento);
+module.exports = router;

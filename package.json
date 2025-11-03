@@ -3,27 +3,44 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "jest --verbose",
+    "test:watch": "jest --watch",
+    "seed": "node scripts/seeds/seed-simple.js",
+    "seed:full": "node scripts/seeds/seed-database.js",
+    "seed:quick": "node scripts/seeds/quick-seed.js",
+    "seed:small": "node scripts/seeds/seed-simple.js --usuarios=10 --medicos=5 --pacientes=20",
+    "seed:large": "node scripts/seeds/seed-simple.js --usuarios=100 --medicos=30 --pacientes=150",
+    "db:clean": "node scripts/database/clean-database.js",
+    "db:reset": "node scripts/database/clean-database.js --reset",
+    "db:fresh": "npm run db:reset && npm run seed",
+    "db:status": "node scripts/database/db-status.js"
   },
   "repository": {
-  "type": "git",
-  "url": "git+https://github.com/benyhi/efi_prog_api.git"
+    "type": "git",
+    "url": "git+https://github.com/benyhi/efi_prog_api.git"
   },
   "author": "",
   "license": "ISC",
-    "bugs": {
+  "bugs": {
     "url": "https://github.com/benyhi/efi_prog_api/issues"
   },
   "homepage": "https://github.com/benyhi/efi_prog_api#readme",
   "description": "API de Examen Final Integrador - Programacion III",
   "dependencies": {
+    "bcryptjs": "^3.0.3",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
-    "sequelize": "^6.37.7"
+    "mysql2": "^3.15.3",
+    "sequelize": "^6.37.7",
+    "sqlite3": "^5.1.7"
   },
   "devDependencies": {
-    "nodemon": "^3.1.10"
-  },
-  "type": "module"
+    "@faker-js/faker": "^10.1.0",
+    "jest": "^30.2.0",
+    "nodemon": "^3.1.10",
+    "supertest": "^7.1.4"
+  }
 }

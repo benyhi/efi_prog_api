@@ -1,0 +1,10 @@
+const express = require('express');
+const disponibilidadMedicoController = require('../controllers/disponibilidadMedicoController.js');
+const router = express.Router();
+router.get('/', disponibilidadMedicoController.getAll);
+router.get('/:id', disponibilidadMedicoController.getById);
+router.post('/', disponibilidadMedicoController.create);
+router.put('/:id', disponibilidadMedicoController.update);
+router.delete('/:id', disponibilidadMedicoController.delete);
+router.get('/medico/:medico_id', disponibilidadMedicoController.getByMedico);
+module.exports = router;

@@ -1,5 +1,6 @@
-module.exports = (sequelize, DataTypes) => {
-  class Usuario extends sequelize.Sequelize.Model {}
+const { DataTypes, Model } = require('sequelize');
+const createUsuario = (sequelize) => {
+  class Usuario extends Model {}
   Usuario.init({
     id: { 
       type: DataTypes.INTEGER, 
@@ -10,10 +11,23 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING(100), 
       allowNull: false 
     },
+    apellido: { 
+      type: DataTypes.STRING(100), 
+      allowNull: true 
+    },
     correo: { 
       type: DataTypes.STRING(150), 
       allowNull: false, 
       unique: true 
+    },
+    email: { 
+      type: DataTypes.VIRTUAL,
+      get() {
+        return this.correo;
+      },
+      set(value) {
+        this.correo = value;
+      }
     },
     contraseña: { 
       type: DataTypes.STRING(255),
@@ -29,6 +43,10 @@ module.exports = (sequelize, DataTypes) => {
     },
     direccion: { 
       type: DataTypes.STRING(200), 
+      allowNull: true 
+    },
+    fecha_nacimiento: { 
+      type: DataTypes.DATEONLY, 
       allowNull: true 
     },
     esta_activo: { 
@@ -53,3 +71,4 @@ module.exports = (sequelize, DataTypes) => {
   });
   return Usuario;
 };
+module.exports = createUsuario;

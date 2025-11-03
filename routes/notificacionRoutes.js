@@ -1,0 +1,14 @@
+const express = require('express');
+const notificacionController = require('../controllers/notificacionController.js');
+const router = express.Router();
+router.get('/', notificacionController.getAll);
+router.get('/:id', notificacionController.getById);
+router.post('/', notificacionController.create);
+router.put('/:id', notificacionController.update);
+router.delete('/:id', notificacionController.delete);
+router.patch('/:id/marcar-leida', notificacionController.marcarLeida);
+router.patch('/marcar-leidas', notificacionController.marcarVariasLeidas);
+router.get('/usuario/:usuario_id', notificacionController.getByUsuario);
+router.post('/masiva', notificacionController.createMasiva);
+router.get('/reportes/estadisticas', notificacionController.getEstadisticas);
+module.exports = router;

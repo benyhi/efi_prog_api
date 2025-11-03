@@ -1,0 +1,10 @@
+const express = require('express');
+const historialPacienteController = require('../controllers/historialPacienteController.js');
+const router = express.Router();
+router.get('/', historialPacienteController.getAll);
+router.get('/:id', historialPacienteController.getById);
+router.post('/', historialPacienteController.create);
+router.put('/:id', historialPacienteController.update);
+router.delete('/:id', historialPacienteController.delete);
+router.get('/paciente/:paciente_id', historialPacienteController.getByPaciente);
+module.exports = router;

@@ -1,0 +1,429 @@
+{
+  "info": {
+    "name": "Sistema Médico API",
+    "description": "Colección de endpoints para la API del Sistema de Gestión Médica",
+    "version": "1.0.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000/api",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "👥 Usuarios",
+      "item": [
+        {
+          "name": "GET Todos los usuarios",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/usuarios?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["usuarios"],
+              "query": [
+                {"key": "page", "value": "1"},
+                {"key": "limit", "value": "10"}
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET Usuario por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/usuarios/1",
+              "host": ["{{base_url}}"],
+              "path": ["usuarios", "1"]
+            }
+          }
+        },
+        {
+          "name": "POST Crear usuario",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Ana\",\n  \"apellido\": \"García\",\n  \"correo\": \"ana.garcia@email.com\",\n  \"contraseña\": \"segura123\",\n  \"rol\": \"paciente\",\n  \"telefono\": \"555-0123\",\n  \"direccion\": \"Av. Principal 456\",\n  \"fecha_nacimiento\": \"1990-03-20\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/usuarios",
+              "host": ["{{base_url}}"],
+              "path": ["usuarios"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🏥 Especialidades",
+      "item": [
+        {
+          "name": "GET Todas las especialidades",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/especialidades",
+              "host": ["{{base_url}}"],
+              "path": ["especialidades"]
+            }
+          }
+        },
+        {
+          "name": "POST Crear especialidad",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Neurología\",\n  \"descripcion\": \"Especialidad enfocada en el sistema nervioso\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/especialidades",
+              "host": ["{{base_url}}"],
+              "path": ["especialidades"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "👨‍⚕️ Médicos",
+      "item": [
+        {
+          "name": "GET Todos los médicos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/medicos?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["medicos"],
+              "query": [
+                {"key": "page", "value": "1"},
+                {"key": "limit", "value": "10"}
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET Médico por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/medicos/1",
+              "host": ["{{base_url}}"],
+              "path": ["medicos", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🤒 Pacientes",
+      "item": [
+        {
+          "name": "GET Todos los pacientes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/pacientes?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["pacientes"],
+              "query": [
+                {"key": "page", "value": "1"},
+                {"key": "limit", "value": "10"}
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET Paciente por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/pacientes/1",
+              "host": ["{{base_url}}"],
+              "path": ["pacientes", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📋 Citas",
+      "item": [
+        {
+          "name": "GET Todas las citas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/citas?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["citas"],
+              "query": [
+                {"key": "page", "value": "1"},
+                {"key": "limit", "value": "10"}
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET Citas por paciente",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/citas/paciente/1",
+              "host": ["{{base_url}}"],
+              "path": ["citas", "paciente", "1"]
+            }
+          }
+        },
+        {
+          "name": "GET Citas por médico",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/citas/medico/1",
+              "host": ["{{base_url}}"],
+              "path": ["citas", "medico", "1"]
+            }
+          }
+        },
+        {
+          "name": "POST Crear cita",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"medico_id\": 1,\n  \"paciente_id\": 1,\n  \"consultorio_id\": 1,\n  \"fecha_hora\": \"2025-11-15T14:00:00.000Z\",\n  \"motivo\": \"Consulta cardiológica\",\n  \"notas\": \"Primera consulta del paciente\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/citas",
+              "host": ["{{base_url}}"],
+              "path": ["citas"]
+            }
+          }
+        },
+        {
+          "name": "PATCH Confirmar cita",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/citas/1/confirmar",
+              "host": ["{{base_url}}"],
+              "path": ["citas", "1", "confirmar"]
+            }
+          }
+        },
+        {
+          "name": "PATCH Cancelar cita",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"motivo_cancelacion\": \"Enfermedad del paciente\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/citas/1/cancelar",
+              "host": ["{{base_url}}"],
+              "path": ["citas", "1", "cancelar"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🏢 Consultorios",
+      "item": [
+        {
+          "name": "GET Todos los consultorios",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/consultorios",
+              "host": ["{{base_url}}"],
+              "path": ["consultorios"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "💊 Medicamentos",
+      "item": [
+        {
+          "name": "GET Todos los medicamentos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/medicamentos?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["medicamentos"],
+              "query": [
+                {"key": "page", "value": "1"},
+                {"key": "limit", "value": "10"}
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET Medicamento por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/medicamentos/1",
+              "host": ["{{base_url}}"],
+              "path": ["medicamentos", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📝 Recetas",
+      "item": [
+        {
+          "name": "GET Todas las recetas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/recetas?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["recetas"],
+              "query": [
+                {"key": "page", "value": "1"},
+                {"key": "limit", "value": "10"}
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📄 Historiales",
+      "item": [
+        {
+          "name": "GET Todos los historiales",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/historiales?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["historiales"],
+              "query": [
+                {"key": "page", "value": "1"},
+                {"key": "limit", "value": "10"}
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "💰 Pagos",
+      "item": [
+        {
+          "name": "GET Todos los pagos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/pagos?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["pagos"],
+              "query": [
+                {"key": "page", "value": "1"},
+                {"key": "limit", "value": "10"}
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🔔 Notificaciones",
+      "item": [
+        {
+          "name": "GET Todas las notificaciones",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/notificaciones?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["notificaciones"],
+              "query": [
+                {"key": "page", "value": "1"},
+                {"key": "limit", "value": "10"}
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📅 Disponibilidades",
+      "item": [
+        {
+          "name": "GET Todas las disponibilidades",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/disponibilidades?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["disponibilidades"],
+              "query": [
+                {"key": "page", "value": "1"},
+                {"key": "limit", "value": "10"}
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

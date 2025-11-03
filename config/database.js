@@ -1,24 +1,36 @@
+require('dotenv').config();
 const { Sequelize, DataTypes } = require('sequelize');
 const path = require('path');
+
 const config = {
-  database: process.env.DB_NAME || 'db',
-  username: process.env.DB_USER || 'user',
-  password: process.env.DB_PASS || 'pass',
+  database: process.env.DB_NAME || 'medical_system',
+  username: process.env.DB_USER || 'root',
+  password: process.env.DB_PASS || '',
   host: process.env.DB_HOST || 'localhost',
   port: process.env.DB_PORT || 3306,
   dialect: process.env.DB_DIALECT || 'mysql',
+  storage: process.env.DB_DIALECT === 'sqlite' 
+    ? (process.env.NODE_ENV === 'test' ? ':memory:' : path.join(__dirname, '..', 'database.sqlite'))
+    : null,
   logging: false,
+  dialectOptions: {
+    charset: 'utf8mb4',
+    collate: 'utf8mb4_general_ci',
+  },
+  define: {
+    freezeTableName: true, 
+    timestamps: false,
+  },
 };
 
 const sequelize = new Sequelize(config.database, config.username, config.password, {
   host: config.host,
   port: config.port,
   dialect: config.dialect,
+  storage: config.storage,
   logging: config.logging,
-  define: {
-    freezeTableName: true, 
-    timestamps: false,
-  },
+  dialectOptions: config.dialectOptions,
+  define: config.define,
 });
 
 const Usuario = require('../models/usuario')(sequelize, DataTypes);
@@ -35,72 +47,47 @@ const RecetaMedicamento = require('../models/receta_medicamento')(sequelize, Dat
 const Pago = require('../models/pago')(sequelize, DataTypes);
 const Notificacion = require('../models/notificacion')(sequelize, DataTypes);
 
-
-// RELACIONES MÉDICAS
-
-// Usuario -> Médico (1:1)
 Usuario.hasOne(Medico, { foreignKey: 'id_usuario', as: 'medico' });
 Medico.belongsTo(Usuario, { foreignKey: 'id_usuario', as: 'usuario' });
 
-// Usuario -> Paciente (1:1)
 Usuario.hasOne(Paciente, { foreignKey: 'id_usuario', as: 'paciente' });
 Paciente.belongsTo(Usuario, { foreignKey: 'id_usuario', as: 'usuario' });
 
-// Especialidad -> Médico (1:N)
-Especialidad.hasMany(Medico, { foreignKey: 'id_especialidad', as: 'medicos' });
-Medico.belongsTo(Especialidad, { foreignKey: 'id_especialidad', as: 'especialidad' });
+Especialidad.hasMany(Medico, { foreignKey: 'especialidad_id', as: 'medicos' });
+Medico.belongsTo(Especialidad, { foreignKey: 'especialidad_id', as: 'especialidad' });
 
-// Médico -> Cita (1:N)
-Medico.hasMany(Cita, { foreignKey: 'id_medico', as: 'citas' });
-Cita.belongsTo(Medico, { foreignKey: 'id_medico', as: 'medico' });
+Medico.hasMany(Cita, { foreignKey: 'medico_id', as: 'citas' });
+Cita.belongsTo(Medico, { foreignKey: 'medico_id', as: 'medico' });
 
-// Paciente -> Cita (1:N)
-Paciente.hasMany(Cita, { foreignKey: 'id_paciente', as: 'citas' });
-Cita.belongsTo(Paciente, { foreignKey: 'id_paciente', as: 'paciente' });
+Paciente.hasMany(Cita, { foreignKey: 'paciente_id', as: 'citas' });
+Cita.belongsTo(Paciente, { foreignKey: 'paciente_id', as: 'paciente' });
 
-// Consultorio -> Cita (1:N)
-Consultorio.hasMany(Cita, { foreignKey: 'id_consultorio', as: 'citas' });
-Cita.belongsTo(Consultorio, { foreignKey: 'id_consultorio', as: 'consultorio' });
+Consultorio.hasMany(Cita, { foreignKey: 'consultorio_id', as: 'citas' });
+Cita.belongsTo(Consultorio, { foreignKey: 'consultorio_id', as: 'consultorio' });
 
-// Paciente -> HistorialPaciente (1:N)
-Paciente.hasMany(HistorialPaciente, { foreignKey: 'id_paciente', as: 'historial' });
-HistorialPaciente.belongsTo(Paciente, { foreignKey: 'id_paciente', as: 'paciente' });
+Paciente.hasMany(HistorialPaciente, { foreignKey: 'paciente_id', as: 'historiales' });
+HistorialPaciente.belongsTo(Paciente, { foreignKey: 'paciente_id', as: 'paciente' });
 
-// Médico -> HistorialPaciente (1:N)
-Medico.hasMany(HistorialPaciente, { foreignKey: 'id_medico', as: 'historiales' });
-HistorialPaciente.belongsTo(Medico, { foreignKey: 'id_medico', as: 'medico' });
+Medico.hasMany(HistorialPaciente, { foreignKey: 'medico_id', as: 'historiales' });
+HistorialPaciente.belongsTo(Medico, { foreignKey: 'medico_id', as: 'medico' });
 
-// Médico -> DisponibilidadMedico (1:N)
-Medico.hasMany(DisponibilidadMedico, { foreignKey: 'id_medico', as: 'disponibilidades' });
-DisponibilidadMedico.belongsTo(Medico, { foreignKey: 'id_medico', as: 'medico' });
+Medico.hasMany(DisponibilidadMedico, { foreignKey: 'medico_id', as: 'disponibilidades' });
+DisponibilidadMedico.belongsTo(Medico, { foreignKey: 'medico_id', as: 'medico' });
 
-// Cita -> Receta (1:N)
-Cita.hasMany(Receta, { foreignKey: 'id_cita', as: 'recetas' });
-Receta.belongsTo(Cita, { foreignKey: 'id_cita', as: 'cita' });
+HistorialPaciente.hasMany(Receta, { foreignKey: 'historial_paciente_id', as: 'recetas' });
+Receta.belongsTo(HistorialPaciente, { foreignKey: 'historial_paciente_id', as: 'historial' });
 
-// Médico -> Receta (1:N)
-Medico.hasMany(Receta, { foreignKey: 'id_medico', as: 'recetas' });
-Receta.belongsTo(Medico, { foreignKey: 'id_medico', as: 'medico' });
+Receta.hasMany(RecetaMedicamento, { foreignKey: 'receta_id', as: 'medicamentos' });
+RecetaMedicamento.belongsTo(Receta, { foreignKey: 'receta_id', as: 'receta' });
 
-// Paciente -> Receta (1:N)
-Paciente.hasMany(Receta, { foreignKey: 'id_paciente', as: 'recetas' });
-Receta.belongsTo(Paciente, { foreignKey: 'id_paciente', as: 'paciente' });
+Medicamento.hasMany(RecetaMedicamento, { foreignKey: 'medicamento_id', as: 'recetas' });
+RecetaMedicamento.belongsTo(Medicamento, { foreignKey: 'medicamento_id', as: 'medicamento' });
 
-// Receta -> RecetaMedicamento (1:N)
-Receta.hasMany(RecetaMedicamento, { foreignKey: 'id_receta', as: 'medicamentos' });
-RecetaMedicamento.belongsTo(Receta, { foreignKey: 'id_receta', as: 'receta' });
+Cita.hasMany(Pago, { foreignKey: 'cita_id', as: 'pagos' });
+Pago.belongsTo(Cita, { foreignKey: 'cita_id', as: 'cita' });
 
-// Medicamento -> RecetaMedicamento (1:N)
-Medicamento.hasMany(RecetaMedicamento, { foreignKey: 'id_medicamento', as: 'recetas' });
-RecetaMedicamento.belongsTo(Medicamento, { foreignKey: 'id_medicamento', as: 'medicamento' });
-
-// Cita -> Pago (1:N)
-Cita.hasMany(Pago, { foreignKey: 'id_cita', as: 'pagos' });
-Pago.belongsTo(Cita, { foreignKey: 'id_cita', as: 'cita' });
-
-// Usuario -> Notificacion (1:N)
-Usuario.hasMany(Notificacion, { foreignKey: 'id_usuario', as: 'notificaciones' });
-Notificacion.belongsTo(Usuario, { foreignKey: 'id_usuario', as: 'usuario' });
+Usuario.hasMany(Notificacion, { foreignKey: 'usuario_id', as: 'notificaciones' });
+Notificacion.belongsTo(Usuario, { foreignKey: 'usuario_id', as: 'usuario' });
 
 module.exports = {
   sequelize,

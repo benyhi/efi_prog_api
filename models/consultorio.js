@@ -21,6 +21,16 @@ module.exports = (sequelize, DataTypes) => {
     numero: { 
       type: DataTypes.STRING(20), 
       allowNull: true 
+    },
+    capacidad: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      defaultValue: 1
+    },
+    esta_disponible: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: true
     }
   }, {
     sequelize,
