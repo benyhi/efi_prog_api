@@ -19,3 +19,5 @@ coverage/
 tmp/
 temp/
 .cache/
+database.sqlite3
+database.sqlite

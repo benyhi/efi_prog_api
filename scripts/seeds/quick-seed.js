@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 const { sequelize } = require('../../config/database');
 const { faker } = require('@faker-js/faker');
+const bcrypt = require('bcryptjs');
 class QuickSeeder {
   async run() {
     console.log('⚡ POBLADO RÁPIDO - DATOS MÍNIMOS PARA DESARROLLO');
@@ -8,12 +9,17 @@ class QuickSeeder {
     try {
       await sequelize.sync({ force: false });
       const Usuario = sequelize.models.Usuario;
+      // Hash known passwords for the quick-seed users
+      const adminPass = await bcrypt.hash('admin123', 10);
+      const medicoPass = await bcrypt.hash('medico123', 10);
+      const pacientePass = await bcrypt.hash('paciente123', 10);
+
       const usuarios = await Usuario.bulkCreate([
         {
           nombre: 'Admin',
           apellido: 'Sistema',
           correo: 'admin@hospital.com',
-          contraseña: 'admin123',
+          contraseña: adminPass,
           rol: 'admin',
           telefono: '555-0001',
           direccion: 'Dirección Admin',
@@ -24,7 +30,7 @@ class QuickSeeder {
           nombre: 'Dr. Juan',
           apellido: 'Pérez',
           correo: 'dr.perez@hospital.com',
-          contraseña: 'medico123',
+          contraseña: medicoPass,
           rol: 'médico',
           telefono: '555-0002',
           direccion: 'Dirección Médico',
@@ -35,7 +41,7 @@ class QuickSeeder {
           nombre: 'María',
           apellido: 'González',
           correo: 'maria@email.com',
-          contraseña: 'paciente123',
+          contraseña: pacientePass,
           rol: 'paciente',
           telefono: '555-0003',
           direccion: 'Dirección Paciente',

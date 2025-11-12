@@ -1,5 +1,6 @@
 const { sequelize } = require('../../config/database');
 const { faker } = require('@faker-js/faker');
+const bcrypt = require('bcryptjs');
 const CONFIG = {
   USUARIOS: 50,
   ESPECIALIDADES: 10,
@@ -54,11 +55,13 @@ class DatabaseSeeder {
     const Usuario = sequelize.models.Usuario;
     for (let i = 0; i < this.config.USUARIOS; i++) {
       try {
+        const plainPassword = faker.internet.password();
+        const hashedPassword = await bcrypt.hash(plainPassword, 10);
         const usuario = await Usuario.create({
           nombre: faker.person.firstName(),
           apellido: faker.person.lastName(),
           correo: faker.internet.email(),
-          contraseña: faker.internet.password(),
+          contraseña: hashedPassword,
           rol: this.getRandomElement(roles),
           telefono: faker.phone.number(),
           fecha_nacimiento: this.getRandomDate(new Date(1950, 0, 1), new Date(2000, 11, 31)),
