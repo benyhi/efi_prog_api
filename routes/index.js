@@ -19,7 +19,9 @@ router.use('/auth', authRoutes);
 
 // Middleware: requerir token JWT para todas las rutas que siguen
 const authMiddleware = require('../middlewares/auth');
+const enrichUserRole = require('../middlewares/enrichUserRole');
 router.use(authMiddleware);
+router.use(enrichUserRole); // Enriquecer req.user con paciente_id o medico_id si existen
 
 // Rutas protegidas (requieren Authorization: Bearer <token>)
 router.use('/usuarios', usuarioRoutes);

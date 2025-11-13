@@ -13,7 +13,7 @@ router.get('/especialidad/:especialidadId', checkRole('admin', 'médico'), medic
 router.get('/:id', checkRole('admin', 'médico', 'paciente'), medicoController.getById);
 
 // Obtener citas de un médico: admin o el propio médico
-router.get('/:id/citas', checkRole('admin', 'médico'), checkRole.allowAdminOrOwnerParam('id'), medicoController.getCitas);
+router.get('/:id/citas', checkRole('admin', 'médico'), checkRole.allowAdminOrOwnMedico('id'), medicoController.getCitas);
 
 // Crear médico: solo admin
 router.post('/', checkRole('admin'), medicoController.create);

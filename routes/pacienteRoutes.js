@@ -10,18 +10,18 @@ router.get('/', checkRole('admin'), pacienteController.getAll);
 router.get('/historia/:numeroHistoria', checkRole('admin', 'médico'), pacienteController.getByHistoriaClinica);
 
 // Obtener paciente por id: admin o el propio paciente
-router.get('/:id', checkRole.allowAdminOrOwnerParam('id'), pacienteController.getById);
+router.get('/:id', checkRole('admin', 'paciente'), checkRole.allowAdminOrOwnPaciente('id'), pacienteController.getById);
 
 // Crear paciente: admin (registro público debe usar /auth/register)
 router.post('/', checkRole('admin'), pacienteController.create);
 
-// Actualizar: admin o propietario
-router.put('/:id', checkRole.allowAdminOrOwnerParam('id'), pacienteController.update);
+// Actualizar: admin o propietario paciente
+router.put('/:id', checkRole('admin', 'paciente'), checkRole.allowAdminOrOwnPaciente('id'), pacienteController.update);
 
 // Eliminar: admin
 router.delete('/:id', checkRole('admin'), pacienteController.delete);
 
 // Obtener citas de un paciente: admin o el propio paciente
-router.get('/:id/citas', checkRole.allowAdminOrOwnerParam('id'), pacienteController.getCitas);
+router.get('/:id/citas', checkRole('admin', 'paciente'), checkRole.allowAdminOrOwnPaciente('id'), pacienteController.getCitas);
 
 module.exports = router;
