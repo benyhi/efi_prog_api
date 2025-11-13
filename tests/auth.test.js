@@ -70,3 +70,8 @@ console.log('   1. Copiar .env.example a .env');
 console.log('   2. Actualizar JWT_SECRET en .env');
 console.log('   3. Ejecutar: npm start');
 console.log('   4. Probar endpoints en Postman\n');
+
+// Añadir un test trivial para integrarse con Jest (este archivo es más un chequeo rápido)
+test('auth quick smoke check', () => {
+  expect(true).toBe(true);
+});

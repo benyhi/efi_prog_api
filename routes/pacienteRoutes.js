@@ -1,11 +1,27 @@
 const express = require('express');
 const pacienteController = require('../controllers/pacienteController.js');
+const checkRole = require('../middlewares/checkRole.js');
 const router = express.Router();
-router.get('/', pacienteController.getAll);
-router.get('/historia/:numeroHistoria', pacienteController.getByHistoriaClinica);
-router.get('/:id', pacienteController.getById);
-router.post('/', pacienteController.create);
-router.put('/:id', pacienteController.update);
-router.delete('/:id', pacienteController.delete);
-router.get('/:id/citas', pacienteController.getCitas);
+
+// Listar pacientes: admin
+router.get('/', checkRole('admin'), pacienteController.getAll);
+
+// Buscar por número de historia clínica: admin o médico
+router.get('/historia/:numeroHistoria', checkRole('admin', 'médico'), pacienteController.getByHistoriaClinica);
+
+// Obtener paciente por id: admin o el propio paciente
+router.get('/:id', checkRole.allowAdminOrOwnerParam('id'), pacienteController.getById);
+
+// Crear paciente: admin (registro público debe usar /auth/register)
+router.post('/', checkRole('admin'), pacienteController.create);
+
+// Actualizar: admin o propietario
+router.put('/:id', checkRole.allowAdminOrOwnerParam('id'), pacienteController.update);
+
+// Eliminar: admin
+router.delete('/:id', checkRole('admin'), pacienteController.delete);
+
+// Obtener citas de un paciente: admin o el propio paciente
+router.get('/:id/citas', checkRole.allowAdminOrOwnerParam('id'), pacienteController.getCitas);
+
 module.exports = router;

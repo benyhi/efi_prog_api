@@ -100,7 +100,30 @@ const medicoController = {
         });
       }
       let usuarioId;
-      if (nombre && email) {
+      // Priorizar usuario_id si se provee (caso en tests/integración)
+      if (usuario_id) {
+        const usuario = await Usuario.findByPk(usuario_id);
+        if (usuario) {
+          usuarioId = usuario_id;
+        } else if (nombre && email) {
+          // Si se proporcionó usuario_id pero no existe, crear usuario nuevo si hay datos
+          const usuarioExistente = await Usuario.findOne({ where: { correo: email } });
+          if (usuarioExistente) {
+            return res.status(400).json({ error: 'Ya existe un usuario con ese email' });
+          }
+          const nuevoUsuario = await Usuario.create({
+            nombre,
+            apellido,
+            correo: email,
+            contraseña: 'temp123',
+            rol: 'médico',
+            telefono
+          });
+          usuarioId = nuevoUsuario.id;
+        } else {
+          return res.status(404).json({ error: 'Usuario no encontrado' });
+        }
+      } else if (nombre && email) {
         const usuarioExistente = await Usuario.findOne({
           where: { correo: email }
         });
@@ -118,14 +141,6 @@ const medicoController = {
           telefono
         });
         usuarioId = nuevoUsuario.id;
-      } else if (usuario_id) {
-        const usuario = await Usuario.findByPk(usuario_id);
-        if (!usuario) {
-          return res.status(404).json({ 
-            error: 'Usuario no encontrado' 
-          });
-        }
-        usuarioId = usuario_id;
       } else {
         return res.status(400).json({ 
           error: 'Se requieren datos del usuario o usuario_id' 
