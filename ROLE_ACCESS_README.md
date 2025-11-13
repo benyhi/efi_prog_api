@@ -19,11 +19,16 @@ Cuando un usuario (ej: María, paciente) se autenticaba, el token JWT contenía 
    - `allowAdminOrOwnMedico(paramName)` — permite admin o el médico propietario (compara con `req.user.medico_id`).
    - `allowAdminOrOwnPacienteBody(fieldName)` — igual pero lee de `req.body` (para crear citas, por ej).
 
-3. **Admin bypass mejorado**:
+3. **CRUD completo protegido para admin**:
+   - **Todas las rutas de lectura (GET)** — disponibles para cualquier usuario autenticado.
+   - **Todas las rutas de escritura (POST, PUT, DELETE, PATCH)** — protegidas con `checkRole('admin')`.
+   - Modelos cubiertos: **Especialidad, Consultorio, Medicamento, Receta, Pago, Historial Paciente, Disponibilidad Médico, Notificación, Usuario, Paciente, Médico, Cita**.
+
+4. **Admin bypass mejorado**:
    - El rol `admin` sigue siendo bypass completo en todas las rutas.
    - Middleware también permite bypass en `NODE_ENV === 'test'` (para que tests aislados funcionen).
 
-4. **Rutas actualizadas para usar mapeo usuario→paciente/médico**:
+5. **Rutas actualizadas para usar mapeo usuario→paciente/médico**:
    - `routes/citaRoutes.js`: paciente ve/crea citas solo para su `paciente_id`; médico confirma/completa sus propias citas.
    - `routes/pacienteRoutes.js`: paciente accede/actualiza solo su propio perfil.
    - `routes/medicoRoutes.js`: médico ve/administra solo sus propias citas.
@@ -35,6 +40,15 @@ Cuando un usuario (ej: María, paciente) se autenticaba, el token JWT contenía 
 - `routes/citaRoutes.js` (usa nuevos helpers)
 - `routes/pacienteRoutes.js` (usa nuevos helpers)
 - `routes/medicoRoutes.js` (usa nuevos helpers)
+- `routes/especialidadRoutes.js` (protegido: POST/PUT/DELETE=admin)
+- `routes/consultorioRoutes.js` (protegido: POST/PUT/DELETE/PATCH=admin)
+- `routes/medicamentoRoutes.js` (protegido: POST/PUT/DELETE/PATCH=admin)
+- `routes/recetaRoutes.js` (protegido: POST/PUT/DELETE=admin)
+- `routes/pagoRoutes.js` (protegido: POST/PUT/PATCH=admin)
+- `routes/historialPacienteRoutes.js` (protegido: POST/PUT/DELETE=admin)
+- `routes/disponibilidadMedicoRoutes.js` (protegido: POST/PUT/DELETE=admin)
+- `routes/notificacionRoutes.js` (protegido: POST/PUT/DELETE/PATCH masiva=admin)
+- `routes/usuarioRoutes.js` (ya protegido)
 
 ---
 
@@ -130,14 +144,57 @@ Cuando un usuario (ej: María, paciente) se autenticaba, el token JWT contenía 
    - Middleware `allowAdminOrOwnPaciente('pacienteId')` verifica: `params.pacienteId (3) === req.user.paciente_id (3)` ✓
    - Lista sus citas sin problemas.
 
-## Contrato rápido (qué espera cada rol)
+## Contrato de permisos por rol (actualizado)
 
-- admin
-  - Acceso completo a la API: puede listar/crear/actualizar/eliminar recursos.
-- médico
-  - Puede ver su perfil, listar y consultar sus citas; puede confirmar/completar las citas que le pertenecen.
-- paciente
-  - Puede registrarse (vía `/api/auth/register`), agendar citas para su propio usuario y ver sus citas.
+### **Admin** — CRUD completo en todos los modelos
+- ✅ Usuarios (crear/actualizar/eliminar/listar)
+- ✅ Pacientes (crear/actualizar/eliminar/listar)
+- ✅ Médicos (crear/actualizar/eliminar/listar)
+- ✅ Citas (crear/actualizar/eliminar/listar/confirmar/completar/cancelar)
+- ✅ Especialidades (crear/actualizar/eliminar/listar)
+- ✅ Consultorios (crear/actualizar/eliminar/listar)
+- ✅ Medicamentos (crear/actualizar/eliminar/listar)
+- ✅ **Recetas** (crear/actualizar/eliminar + agregar/eliminar medicamentos)
+- ✅ **Historiales de Pacientes** (crear/actualizar/eliminar)
+- ✅ **Disponibilidades Médico** (crear/actualizar/eliminar para cualquier médico)
+- ✅ Pagos (crear/actualizar/anular)
+- ✅ Notificaciones (crear/actualizar/eliminar + envío masivo)
+
+### **Médico** — Permiso limitado a sus propios datos
+- 📖 **Citas**: ver/confirmar/completar/cancelar solo sus propias citas
+- 🩺 **Historiales**: crear/editar historiales de pacientes **que están bajo su cuidado**
+- 💊 **Recetas**: crear/editar recetas (que aparecen en historiales de sus pacientes), **NO eliminar**
+- 📅 **Disponibilidades**: CRUD completo para su propia disponibilidad
+- 📋 Acceso de lectura a: especialidades, consultorios, medicamentos, médicos
+
+### **Paciente** — Solo sus propios datos
+- 🗓️ **Citas**: crear (agendar para sí mismo) / ver / cancelar sus propias citas
+- 🧑 Acceso de lectura a: su propio perfil, médicos, especialidades, consultorios
+- ❌ NO puede crear/editar/eliminar: historiales, recetas, pagos, etc.
+
+---
+
+## Resumen anterior de cambios
+    - **Lectura (GET)**: todas las especialidades, consultorios, medicamentos, recetas, pagos, historiales, disponibilidades, notificaciones, usuarios, pacientes, médicos, citas.
+    - **Creación (POST)**: puede crear cualquier recurso.
+    - **Actualización (PUT)**: puede actualizar cualquier recurso.
+    - **Eliminación (DELETE)**: puede eliminar cualquier recurso.
+    - **Acciones especiales (PATCH)**: toggle de estados, marcar notificaciones como leídas, cancelar citas, confirmar citas, completar citas, anular pagos, etc.
+
+- **médico**
+  - Puede ver su perfil, especialidad.
+  - Puede listar y consultar sus **propias citas** (`/api/citas/medico/:medicoId` donde medicoId = su medico_id del token).
+  - Puede **confirmar, completar y cancelar sus propias citas**.
+  - Puede ver **historiales de pacientes** (lectura para consultar antecedentes).
+  - **No puede**: crear, editar o eliminar recursos (solo admin).
+
+- **paciente**
+  - Puede ver su perfil (`/api/pacientes/:pacienteId` donde pacienteId = su paciente_id del token).
+  - Puede actualizar su propio perfil.
+  - **Puede agendar citas** (`POST /api/citas`) pero solo para su propio `id_paciente`.
+  - Puede ver sus **propias citas** (`/api/citas/paciente/:pacienteId` donde pacienteId = su paciente_id del token).
+  - Puede **cancelar sus propias citas**.
+  - **No puede**: acceder a recursos de otros pacientes, crear especialidades, medicamentos, etc.
 
 ## Cómo probar con Postman (paso a paso mejorado)
 
