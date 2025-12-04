@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     fecha_nacimiento: { 
       type: DataTypes.DATEONLY, 
-      allowNull: false 
+      allowNull: true 
     },
     genero: { 
       type: DataTypes.ENUM('M', 'F', 'Otro'), 
